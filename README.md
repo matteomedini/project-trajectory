@@ -1,11 +1,11 @@
-# traejctory-reconstruction-2026
+# trajectory-reconstruction-2026
 
 This project reconstructs racing lines from iRacing telemetry and compares a target lap against a reference lap on a corner-by-corner basis.
 
 iRacing does not provide a directly usable GPS racing line in the telemetry stream, so this project rebuilds the trajectory from physical telemetry channels and then compares that reconstructed line against GPS-derived trajectories for validation and visual inspection.
 
 The output is:
- advice labels at every curve for `entry`, `apex`, and `exit`
+- advice labels at every curve for `entry`, `apex`, and `exit`
 - physical trajectory plots
 - GPS vs physical comparison plots for each corner
 
@@ -26,18 +26,22 @@ This project solves that by:
 This makes it possible to perform racing line analysis and driver coaching even when GPS is not part of the simulator telemetry workflow.
 
 ## Files
-- curveloop.py
+- `trajectory_advice.py`
+  - contains the core reconstruction and corner advice logic
+  - exposes the main function used to evaluate a single curve segment
+  - contains the preset system used by the reconstruction pipeline
 
-contains the core reconstruction and corner advice logic
-exposes the main function used to evaluate a single curve segment
+- `run_analysis.py`
+  - loads the two CSV files
+  - loops over all defined turns
+  - prints corner-by-corner advice
+  - shows physical and GPS comparison plots
 
+- `data/ts1.csv`
+  - bundled example reference lap
 
-- run_analysis.py
-
-loads the two CSV files
-loops over all defined turns
-prints corner-by-corner advice
-shows physical and GPS comparison plots
+- `data/ts2.csv`
+  - bundled example lap to compare against the reference
 
 
 ## Required Input Data
@@ -54,31 +58,75 @@ the physical trajectory reconstruction does not use GPS in the core reconstructi
 
 ## Installation
 Clone the repository and install dependencies:
+
+```bash
 pip install -r requirements.txt
+```
 
 
 ## How to Use
-Open run_analysis.py and configure these values:
+Open `run_analysis.py` and configure these values:
 
-REF_FILE = "data/ref.csv"
-
-ME_FILE = "data/me.csv"
-
-TRACK_NAME = "Your Track Name"
-
-TRACK_LENGTH_M = track length (m)
-
+```python
+REF_FILE = "data/ts1.csv"
+ME_FILE = "data/ts2.csv"
+TRACK_NAME = "Virginia International Raceway"
+TRACK_LENGTH_M = 5220.0
 TURNS = [ .. ]
+```
 
-You need to provide:
+The repository already includes a working example pair:
 
-path to the reference CSV
-path to the lap being compared
-track length in meters
-the list of turns as (start_pct, end_pct, "Turn Name")
+```text
+data/ts1.csv
+data/ts2.csv
+```
+
+These are the same files originally used locally as:
+
+```text
+/Users/matteo/Documents/aimotor/aimotor_exe/test_notebooks/ts1.csv
+/Users/matteo/Documents/aimotor/aimotor_exe/test_notebooks/ts2.csv
+```
+
+You can run the project immediately with the bundled files, or replace the paths with your own CSVs.
+
+You need to provide or edit:
+
+- path to the reference CSV
+- path to the lap being compared
+- track length in meters
+- the list of turns as `(start_pct, end_pct, "Turn Name")`
 
 Then run:
+```bash
 python run_analysis.py
+```
+
+## Presets
+
+The reconstruction supports multiple preset configurations, defined in `trajectory_advice.py`.
+
+The default preset is:
+
+```python
+ACTIVE_PRESET = "A_balanced"
+```
+
+Available presets are:
+
+- `A_balanced`
+- `B_u_turn`
+- `C_smooth`
+
+To change the reconstruction behavior for a different track or corner profile, edit only:
+
+```python
+ACTIVE_PRESET = "A_balanced"
+```
+
+and replace it with one of the other preset names.  
+No manual parameter editing is required unless you want to create a new preset.
 
 
 ## Mathematical Formulation

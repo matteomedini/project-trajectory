@@ -6,16 +6,16 @@ import matplotlib.pyplot as plt
 import numpy as np
 import pandas as pd
 
-from curveloop import build_curve_advice_labels_object
+from trajectory_advice import ACTIVE_PRESET, PRESETS, build_curve_advice_labels_object
 
 
 # =========================
 # USER CONFIG
 # =========================
-REF_FILE = "data/ref.csv"
-ME_FILE = "data/me.csv"
+REF_FILE = "data/ts1.csv"
+ME_FILE = "data/ts2.csv"
 
-TRACK_NAME = "Your Track Name"
+TRACK_NAME = "Virginia International Raceway"
 TRACK_LENGTH_M = 5220.0
 
 TURNS = [
@@ -35,31 +35,7 @@ N_INTERP = 4000
 SHOW_PLOTS = True
 PLOT_CONTEXT_M = 20.0
 
-
-
-CFG = {
-    "min_points_turn": 25,
-    "speed_win": 5,
-    "ds_win": 3,
-    "yaw_win": 7,
-    "yr_win": 9,
-    "rate_head_win": 7,
-    "heading_win": 5,
-    "w_yaw": 0.55,
-    "w_rate": 0.45,
-    "speed_floor": 0.8,
-    "ds_max_p95": 2.8,
-    "ds_max_p50": 4.2,
-    "entry_threshold_factor": 0.23,
-    "exit_threshold_factor": 0.32,
-    "hold_samples": 6,
-    "entry_shift_pct": 0.015,
-    "pct_window_entry": 0.0070,
-    "pct_window_apex": 0.0055,
-    "pct_window_exit": 0.0060,
-    "dead_zone_m": 0.18,
-    "slight_max_m": 0.45,
-}
+CFG = PRESETS[ACTIVE_PRESET].copy()
 
 
 def _fill_nan_1d(a):
@@ -594,6 +570,7 @@ def main():
     base_lat_global = float(df_ref["Lat"].iloc[0]) if gps_available else None
 
     print(f"\nTrack: {TRACK_NAME}")
+    print(f"Preset: {ACTIVE_PRESET}")
     print(f"REF file: {REF_FILE}")
     print(f"ME  file: {ME_FILE}")
     print(f"GPS available: {gps_available}")

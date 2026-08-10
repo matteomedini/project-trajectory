@@ -1,3 +1,78 @@
+ACTIVE_PRESET = "A_balanced"
+
+PRESETS = {
+    "A_balanced": {
+        "min_points_turn": 25,
+        "speed_win": 5,
+        "ds_win": 5,
+        "yaw_win": 9,
+        "yr_win": 11,
+        "rate_head_win": 9,
+        "heading_win": 7,
+        "w_yaw": 0.68,
+        "w_rate": 0.32,
+        "speed_floor": 0.8,
+        "ds_max_p95": 2.3,
+        "ds_max_p50": 3.8,
+        "entry_threshold_factor": 0.26,
+        "exit_threshold_factor": 0.35,
+        "hold_samples": 8,
+        "entry_shift_pct": 0.020,
+        "pct_window_entry": 0.0060,
+        "pct_window_apex": 0.0045,
+        "pct_window_exit": 0.0050,
+        "dead_zone_m": 0.20,
+        "slight_max_m": 0.50,
+    },
+    "B_u_turn": {
+        "min_points_turn": 24,
+        "speed_win": 5,
+        "ds_win": 5,
+        "yaw_win": 11,
+        "yr_win": 11,
+        "rate_head_win": 9,
+        "heading_win": 9,
+        "w_yaw": 0.92,
+        "w_rate": 0.08,
+        "speed_floor": 0.8,
+        "ds_max_p95": 2.0,
+        "ds_max_p50": 3.2,
+        "entry_threshold_factor": 0.28,
+        "exit_threshold_factor": 0.38,
+        "hold_samples": 10,
+        "entry_shift_pct": 0.028,
+        "pct_window_entry": 0.0050,
+        "pct_window_apex": 0.0040,
+        "pct_window_exit": 0.0040,
+        "dead_zone_m": 0.20,
+        "slight_max_m": 0.50,
+    },
+    "C_smooth": {
+        "min_points_turn": 25,
+        "speed_win": 7,
+        "ds_win": 7,
+        "yaw_win": 13,
+        "yr_win": 13,
+        "rate_head_win": 11,
+        "heading_win": 9,
+        "w_yaw": 0.78,
+        "w_rate": 0.22,
+        "speed_floor": 0.8,
+        "ds_max_p95": 2.1,
+        "ds_max_p50": 3.4,
+        "entry_threshold_factor": 0.28,
+        "exit_threshold_factor": 0.38,
+        "hold_samples": 10,
+        "entry_shift_pct": 0.024,
+        "pct_window_entry": 0.0055,
+        "pct_window_apex": 0.0040,
+        "pct_window_exit": 0.0045,
+        "dead_zone_m": 0.22,
+        "slight_max_m": 0.55,
+    },
+}
+
+
 def build_curve_advice_labels_object(
     df_ref,
     df_me,
@@ -18,36 +93,13 @@ def build_curve_advice_labels_object(
 
     NOTE:
     - NO GPS in physical
-    - Parameters are fixed, can be changed according to track
+    - Parameters are controlled by the selected preset
     """
     import math
     import numpy as np
     import pandas as pd
 
-    
-    CFG = {
-        "min_points_turn": 25,
-        "speed_win": 5,
-        "ds_win": 3,
-        "yaw_win": 7,
-        "yr_win": 9,
-        "rate_head_win": 7,
-        "heading_win": 5,
-        "w_yaw": 0.55,
-        "w_rate": 0.45,
-        "speed_floor": 0.8,
-        "ds_max_p95": 2.8,
-        "ds_max_p50": 4.2,
-        "entry_threshold_factor": 0.23,
-        "exit_threshold_factor": 0.32,
-        "hold_samples": 6,
-        "entry_shift_pct": 0.015,
-        "pct_window_entry": 0.0070,
-        "pct_window_apex": 0.0055,
-        "pct_window_exit": 0.0060,
-        "dead_zone_m": 0.18,
-        "slight_max_m": 0.45,
-    }
+    CFG = PRESETS[ACTIVE_PRESET].copy()
 
     def _fill_nan_1d(a):
         a = np.asarray(a, dtype=float).copy()
